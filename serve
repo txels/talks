@@ -1,0 +1,4 @@
+#!/bin/bash
+eval "$(pyenv init -)"
+pyenv shell 3.6.6
+python -m http.server 8080
