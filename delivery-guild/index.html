@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html id="txels" class="override">
+  <head>
+    <!--
+      OK, name your slides:
+    -->
+    <title>Slingshot News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Fira+Sans::300,300i,400,400i,500,700,700i' async>
+
+    <!-- SlidePack basic stylesheets and theme -->
+    <link rel="stylesheet" type="text/css" href="slide-pack.css">
+    <link rel="stylesheet" type="text/css" href="txels.css">
+  </head>
+
+<body>
+
+<textarea data-slide-pack>
+
+--  heading
+
+# Delivering containers
+
+...and a bit more.
+
+(teaser)
+
+-- 
+
+A CI/CD pipeline in a nutshell:
+
+- **Build** *(turn source code into something that can be run)*
+- **Test** *(verify the runnable thing does what it should)*
+- **Deploy** *(give this runnable thing a happy running home)*
+
+...artifacts.
+
+--
+
+Docker images as the ultimate build artifact
+
+- All dependencies packaged into the artifact (no funny surprises)
+- What you run **locally** == what runs in **CI** == what runs in **prod**
+
+-- heading
+
+The (broken) docker workflow at Skyscanner
+
+--
+
+The image we test:
+
+```
+# .drone.yml
+
+pipeline:
+  build:
+    image: 325714046698.dkr.ecr.eu-west-1.amazonaws.com/skyscanner/java8-jdk-dropwizard-build:3.0.2
+```
+
+(examples extracted from dropwizard cookiecutter)
+
+--
+
+The image we build and deploy:
+
+```
+# Dockerfile
+
+FROM 325714046698.dkr.ecr.eu-west-1.amazonaws.com/skyscanner/java10-jre:6.2.5
+
+...
+```
+
+-- heading
+
+Should we fix this?
+
+How should we fix this?
+
+-- 
+
+Do these topics interest you?
+
+Do you want to help us shape the future of software delivery at Skyscanner?
+
+-- heading
+
+Join the guild.
+
+#delivery-guild
+
+</textarea>
+
+    <!-- SlidePack markdown compilation & UI goodies -->
+    <script src="slide-pack.js"></script>
+  </body>
+</html>
+
