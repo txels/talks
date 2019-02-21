@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html id="txels" class="override">
+  <head>
+    <!--
+      OK, name your slides:
+    -->
+    <title>Slingshot News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Fira+Sans::300,300i,400,400i,500,700,700i' async>
+
+    <!-- SlidePack basic stylesheets and theme -->
+    <link rel="stylesheet" type="text/css" href="slide-pack.css">
+    <link rel="stylesheet" type="text/css" href="txels.css">
+  </head>
+
+<body>
+
+<textarea data-slide-pack>
+
+--  heading
+
+# What is Jirafy
+
+Jirafy is a Slack bot that can **turn a slack conversation into a ticket**,
+and will be able to **keep both in sync**.
+
+
+-- whoami center
+
+The DET/Jirafy team (February/March):
+
+```
+> Carles Barrobés 
+> Iain Bowman
+> Iain Jess
+> Patrick Menlove
+> Richard North
+> Tamas Flamich
+```
+
+--
+
+# Context
+
+ - We have successfully consolidated the the first line of support into a busy **`#det-support`** channel
+ - However, there are still issues that need to be followed upon, and
+creating a ticket can be bit of a tedious process
+ - There could be a bot for that!
+
+--
+
+# The Jirafy feature set
+
+Create a JIRA ticket with the least effort: 
+
+- Add a comment to a thread, e.g. `@jirafy DO Deployments for lambdas to new accounts fail` 
+
+- Ticket will include: 
+
+  - body and comments from the thread, plus a link to Slack
+  - a "BAU" tag
+
+Keep things in sync:
+
+- In particular, changes in JIRA should notify the thread
+
+--
+
+# The conversation in slack
+
+<img src="slackchat.png" style="width:80vh; display: block; margin: 0px auto;"/>
+
+
+-- 
+
+# A ticket created by Jirafy
+
+<img src="jiraticket.png" style="width:90vh; display: block; margin: 0px auto;"/>
+
+
+-- heading
+
+# Thanks!
+
+
+
+</textarea>
+
+    <!-- SlidePack markdown compilation & UI goodies -->
+    <script src="slide-pack.js"></script>
+  </body>
+</html>
+
