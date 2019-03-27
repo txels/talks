@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html id="txels" class="override">
+  <head>
+    <!--
+      OK, name your slides:
+    -->
+    <title>Slingshot News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Fira+Sans::300,300i,400,400i,500,700,700i' async>
+
+    <!-- SlidePack basic stylesheets and theme -->
+    <link rel="stylesheet" type="text/css" href="slide-pack.css">
+    <link rel="stylesheet" type="text/css" href="txels.css">
+  </head>
+
+<body>
+
+<textarea data-slide-pack>
+
+-- heading
+
+# Slingshot
+
+<img src="img/slingshot-logo.png" alt="Slingshot logo" style="height:20vh; display: block; margin: 0px auto;"/>
+
+- What Skyscanner's deployment tool is
+- What it aims to become
+- How it fits within the rest of our enablement tools and platforms.
+
+-- heading
+
+# The Single Most Trusted App to Deliver Changes to Production
+
+--
+
+# What Slingshot does for us Today
+
+Deploy infrastructure and services to target platforms:
+
+- infrastructure via AWS cloudformation
+- microservices to Kubernetes and ECS clusters
+- serverless workloads to AWS lambda
+- AWS batch jobs
+- state machines to AWS step functions
+- ...
+
+--
+
+Slingshot in Context
+
+
+<img src="img/slingshot-in-context.svg" alt="Slingshot in context" style="height:80vh; display: block; margin: 0px auto;"/>
+
+--
+
+Slingshot Components
+
+
+<img src="img/slingshot-containers.svg" style="height:80vh; display: block; margin: 0px auto;"/>
+
+--
+
+## Slingshot Deployed Across Regions
+<img src="img/slingshot-regional.svg" style="width:70vw; display: block; margin: 0px auto;"/>
+
+--
+
+# Basic Principles of Operation
+
+- Deployment definition as Code
+- Integrated with CI (via a Drone plugin)
+- Multi-region/account deployment pipelines
+- Metrics-based Blue/Green deployments
+- Notifications: Slack, webhook, metrics annotations, github commit status
+
+--
+
+# Deployment definition as a YAML file
+
+Includes:
+- Service Metadata
+- Type of Deployment
+- Target Location: account, region, [cluster]
+- Configuration specific to the Deployment Type
+- Notification info
+
+--
+
+Generic Slingshot fields
+
+```yaml
+project: slurp                # metadata
+serviceName: lullaby
+serviceType: ...
+
+accounts:                     # target locations: accounts and regions
+- name: some-account
+  id: "838493913463"
+regions: [eu-west-1, ap-northeast-1]
+
+annotations:                  # buzzsaw annotations
+  enabled: yes
+  extraTags:
+    - deploy=lullaby-deployment
+
+slack:                        # slack notification
+  on_fail: yes
+  on_complete: no
+  webhook_url: https://hooks.slack.com/services/...
+  channel: "#lullaby"
+  build_author: <!subteam^lullaby-gf|@lullaby-gf>
+```
+
+--
+
+Specific configuration based on deployment type - e.g. infrastructure:
+
+```yaml
+serviceType: infrastructure
+
+supportFiles:
+  buckets:
+    filename: cf/buckets.yml
+  somethingElse:
+    filename: cf/somethingElse.yml
+
+dryRun: {{ dry_run }}
+
+stacks:
+  - name: slurp-buckets
+    template: $$FILES.buckets
+    parameters:
+      BucketSuffix: first
+  - name: slurp-something-else
+    template: $$FILES.somethingElse
+    parameters:
+      First: '$$REGION-suffix'
+```
+
+--
+
+# Integrated with CI
+
+Specify your deployment as a Drone step:
+
+```yaml
+deploy:
+  image: 325714046698.dkr.ecr.eu-west-1.amazonaws.com/drone-plugins/slingshot-service
+  endpoint: https://slingshot.eu-west-1.prod.aws.skyscnr.com/
+  custom_parameters:
+    dry_run: yes         # referenced as {{ dry_run }} in .slingshot.yml
+    secrets:
+      boom: ${NUCLEAR_LAUNCH_CODE}
+```
+
+--
+
+# Multi-Region/Account Deployment Pipelines
+
+> One Slingshot to Deploy Them All
+
+Perform a **multi-service**, **multi-account**, **multi-region** deployment as a single orchestrated execution.
+
+<br/>
+Within a pipeline you specify what elements will
+be deployed where in which order.
+
+--
+
+## Pipeline Example
+
+```yaml
+serviceType: pipeline
+serviceName: pipeline-demo
+# ...
+
+pipeline:
+  - file: .slingshot-batch.yml      # external yaml
+  - definition:                     # inlined definition
+      serviceType: api
+      serviceName: pipeline-demo
+      serviceDefinition:
+        cluster: "{{ ecs_cluster }}"
+        role: ""
+      taskDefinition:
+        containerDefinitions:
+          - name: "hello-world"
+            image: "tutum/hello-world"
+            memory: 128
+```
+
+--
+
+## Regional Variations
+
+You can specify variant configurations per region:
+
+```yaml
+regions:
+  eu-west-1:
+    defaultCount: 12
+  ap-northeast-1:
+    defaultCount: 6
+```
+
+Example replacement:
+
+```yaml
+                                  # Values when deploying to eu-west-1:
+First: 'prefix-$$REGION-suffix'   # 'prefix-eu-west-1-suffix'
+Second: $$META.defaultCount       # 12
+```
+
+--
+
+## Regional Rollouts
+
+- Choose the rollout order for regions
+- Combine serial and parallel regions for canary rollouts
+
+```yaml
+# define regions and rollout order
+rollout:
+  - [ap-northeast-1]
+  - [eu-west-1, eu-central-1]
+  - [ap-southeast-1]
+
+pipeline:
+  - file: .slingshot-role.yml
+    regions: ['ap-northeast-1']     # regions this step will run in
+  - file: .slingshot-k8s.yml        # no filter, deploy to all regions
+```
+
+-- heading
+
+# The Future of Slingshot
+
+--
+
+# Single path to production
+
+With Slingshot being "the single app to deliver changes to production", we can have:
+
+- A picture of what is deployed to production, by whom
+- A centralised audit trail and timeline of changes
+- A global Disaster Recovery / Rehydration mechanism
+- A mechanism to control what can or can't be deployed (e.g. during an incident)
+- Consolidated delivery metrics
+
+--
+
+# Extensibility
+
+- Generic workflows: webhook based custom workflows
+   - already in beta use for Akamai configuration deployments
+
+-- heading
+
+# Thanks!
+
+> Carles Barrobés & the Copper team
+
+
+</textarea>
+
+    <!-- SlidePack markdown compilation & UI goodies -->
+    <script src="slide-pack.js"></script>
+  </body>
+</html>
+
