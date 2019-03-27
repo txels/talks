@@ -63,7 +63,7 @@ Slingshot Components
 
 --
 
-## Slingshot Deployed Across Regions
+## How Slingshot Deploys Across Regions
 <img src="img/slingshot-regional.svg" style="width:70vw; display: block; margin: 0px auto;"/>
 
 --
@@ -81,7 +81,7 @@ Slingshot Components
 # Deployment definition as a YAML file
 
 Includes:
-- Service Metadata
+- Service Metadata (some overlap with .catalog.yml)
 - Type of Deployment
 - Target Location: account, region, [cluster]
 - Configuration specific to the Deployment Type
@@ -180,7 +180,7 @@ serviceName: pipeline-demo
 pipeline:
   - file: .slingshot-batch.yml      # external yaml
   - definition:                     # inlined definition
-      serviceType: api
+      serviceType: ecs
       serviceName: pipeline-demo
       serviceDefinition:
         cluster: "{{ ecs_cluster }}"
@@ -224,15 +224,44 @@ Second: $$META.defaultCount       # 12
 ```yaml
 # define regions and rollout order
 rollout:
-  - [ap-northeast-1]
-  - [eu-west-1, eu-central-1]
-  - [ap-southeast-1]
+- accounts: ['sandbox']
+  regions: ['eu-west-1']
+- accounts: ['slingshot-test']
+  regions: ['eu-west-1', 'ap-northeast-1']
 
 pipeline:
   - file: .slingshot-role.yml
-    regions: ['ap-northeast-1']     # regions this step will run in
-  - file: .slingshot-k8s.yml        # no filter, deploy to all regions
+    regions: ['eu-west-1']         # regions this step will run in
+  - file: .slingshot-k8s.yml       # no filter, deploy to all regions
 ```
+
+--
+
+## Pipelines in the wild
+
+- [Test service definitions](https://github.skyscannertools.net/raw/slingshot/test-service-definitions/master/.slingshot.yml?token=AAACA8BoSRtw2hxvx2hOq_WhWSMb1IW0ks5cpHXdwA%3D%3D)
+- [whostar](https://github.skyscannertools.net/raw/route-and-timetable-services/whostar-service/master/.slingshot.yml?token=AAACAw9hjQ0ggdSJIbH9UsRBoGUNgVB0ks5cpHThwA%3D%3D)
+- [Gateway Infrastructure](https://github.skyscannertools.net/service-routing/gateway-infra/blob/deploy-inchmoan/.slingshot.yml)
+- [K8s QPS clusters](https://github.skyscannertools.net/k8s/k8s-infx-cloudformation/blob/master/slingshot-pipeline-prod-qps.yml)
+
+--
+
+## Limitations
+
+Pipeline deployments are a first MVP, IMO an unfinished product.
+
+- There is no way to rollback a pipeline
+- Usability is not great (neither in definition nor in UI support)
+- They are not the default option in most cookiecutters
+- No support for selective deployments
+
+--
+
+# Metrics-based Blue/Green and beyond
+
+- We support both OpenTSDB and Prometheus metrics, for ECS and Kubernetes blue/green deployments
+- Metrics checks can also be added as standalone steps in a pipeline
+
 
 -- heading
 
@@ -254,8 +283,12 @@ With Slingshot being "the single app to deliver changes to production", we can h
 
 # Extensibility
 
+Add mechanisms so that non-Slinghshot-core engineers can extend deployment workflows.
+
 - Generic workflows: webhook based custom workflows
    - already in beta use for Akamai configuration deployments
+   - can be used within pipelines
+   - could be used as validation / gating steps in rollouts (e.g. to run smoke tests)
 
 -- heading
 
