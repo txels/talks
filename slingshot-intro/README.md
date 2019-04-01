@@ -1,3 +1,4 @@
-# Talk slides: what's new in Slingshot
+# Talk slides: introduction to Slingshot
 
-Originally written for the Skyscanner BCN chapter, to cover IaC and pipelines.
+Adapted from an intro to IaC and pipelines, originally intended for the Technical Initiatives
+Group within Skyscanner (principal engineers and engineering managers).
