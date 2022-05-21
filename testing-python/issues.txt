@@ -1,0 +1,8 @@
+# issues to find in tests:
+# - punctuation is not processed correctly (e.g. "hello,").
+# - articles and "common words" are counted
+# - lyrics with non-ascii letters / hardcoded encoding
+    # print(response.headers['content-type'])
+# - songs not found, missing lyrics...
+# - arbitrary answers when multiple words have same count
+
