@@ -1,0 +1,148 @@
+#txels html {
+  font-size: 1em;
+  line-height: 1.5em;
+  margin: 0;
+  background: #f0f0ea;
+}
+
+#txels body {
+  font-weight: 300;
+}
+
+#txels h1 {
+  line-height: 1.2em;
+  font-weight: 700;
+}
+
+#txels h2 {
+  font-size: 2.6rem;
+  line-height: 1.2em;
+  font-weight: bold;
+}
+
+#txels h3 {
+  font-size: 2.4rem;
+  line-height: 1.2em;
+}
+
+#txels h4,
+#txels h5 {
+  font-size: 2.2rem;
+  line-height: 1.2em;
+}
+
+#txels li,
+#txels p {
+  font-size: 2rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+#txels ul {
+  list-style-position: unset;
+}
+
+#txels blockquote {
+  border-left: 4px solid lightgray;
+  padding-left: 2em;
+  margin: 1em 0.5em;
+}
+
+#txels blockquote p {
+  /*color: #60a8f6;*/
+  color: #555;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 1.5em;
+}
+
+#txels section:not(.heading) {
+  -webkit-align-items: left;
+  -ms-flex-align: left;
+  align-items: left;
+  -webkit-justify-content: left;
+  -ms-flex-pack: left;
+  justify-content: left;
+  padding: 2vh 10vw;
+  min-width: 600px;
+}
+
+#txels section:last-child {
+  background-color: #555;
+  color: #eee;
+}
+
+#txels section.links a,
+#txels section.links li {
+  font-size: 1.5rem;
+}
+
+#txels section:last-child a {
+  color: #dff;
+  font-size: 1.5rem;
+}
+
+#txels section:last-child blockquote {
+  margin: 1em 0;
+  border-left: none;
+  padding: 0;
+}
+#txels section:last-child blockquote p {
+  color: #eee;
+  font-size: 1.5rem;
+}
+
+#txels section:first-child code,
+#txels section:last-child code {
+  color: black;
+  font-size: 70%;
+  padding: 2px;
+  margin: 0 1em;
+}
+
+#txels pre code {
+  font-size: 1.3rem;
+}
+
+/* Styles for special pages */
+#txels section.whoami pre code {
+  font-size: 2rem;
+}
+
+#txels section.center {
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+#txels section.heading,
+#txels section.heading {
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #677;
+}
+
+#txels section.heading h1,
+#txels section.heading h2,
+#txels section.heading li,
+#txels section.heading pre,
+#txels section.heading p {
+  color: #eee;
+}
+
+#txels section.heading h1 {
+  font-size: 3.5em;
+  margin-bottom: 0.5em;
+  text-shadow: 0.1em 0.1em #333;
+}
+
+#txels img {
+  max-height: 40vh;
+  margin: 1rem auto;
+  display: block;
+}

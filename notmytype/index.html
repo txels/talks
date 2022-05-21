@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html id="txels" class="override">
+  <head>
+    <title>Not my type</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      href="http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://fonts.googleapis.com/css?family=Fira+Sans::300,300i,400,400i,500,700,700i"
+      async
+    />
+
+    <!-- SlidePack basic stylesheets and theme -->
+    <link rel="stylesheet" type="text/css" href="slide-pack.css" />
+    <link rel="stylesheet" type="text/css" href="txels.css" />
+  </head>
+
+  <body>
+    <textarea data-slide-pack>
+
+-- heading
+
+# Sorry, you're not my type
+
+![](notmytype.png)
+
+**Type annotations** *(aka type hints)* in Python, how to use them,
+and goodies we can get out of them.
+
+<br/>
+> ...brought to you by Carles Barrobés
+
+-- whoami
+
+## `whoami`
+
+I'm **Carles Barrobés**, a *freelance Software Engineer*
+with a special focus on **Developer Enablement** and
+**Continuous Delivery**.
+
+![](whoami.png)
+
+--
+
+## Type Hints
+
+If we provide information about the types in our code,
+tools can do _interesting stuff_ with it.
+
+> **New in version 3.5**
+>
+> The Python runtime does not enforce them.
+>
+> They can be used by third party tools: type checkers, IDEs, linters, etc.
+
+<br/>
+_Type hints are optional_.
+
+--
+
+## Hints you may use
+
+- Primitive types
+- User-defined types (classes, enums, `NewType`, type aliases...)
+- Definitions from the `typing` package: `Dict`, `List`, `Optional`, `Union`...
+
+```python
+from typing import Dict, List, Union
+
+class Tomato:
+    data: Dict[str, int] = {"ripeness": 3}
+    friends: List[str]
+    extra: Union[str, bool] = "Jim"  # or = False
+
+me: int = 12
+
+def best_friend(tomato: Tomato) -> str:
+    return tomato.friends[0]
+
+```
+--
+
+## Tools
+
+### `mypy` - static analysis of type hints
+
+Basic usage:
+
+```sh
+$ mypy <file>.py      # check a single file
+$ mypy -p <package>   # check a python package,
+                      # recursively
+```
+
+--
+
+## Let's try a very simple example
+
+```python
+# pack/example1.py
+
+def hello(name: str) -> None:
+   print(f"Hello {name}")
+
+
+def main():
+    hello(12)               # Bad
+    hello({"name": "Jim"})  # WTH
+```
+
+<br/>
+
+```sh
+$ mypy pack/example1.py
+```
+
+--
+
+## Caveats
+
+By default, `mypy` will only find issues if "callee and caller"
+both use type hints. Either:
+
+ - Add hints to callers
+ - ...or use `mypy --check-untyped-defs`
+<br/>
+
+We'll add a return type:
+
+```python
+def main() -> str:  # <<< added return type
+    hello(12)
+    hello({"name": "Jim"})
+```
+
+````sh
+$ mypy pack/example1b.py
+...
+Found 3 errors in 1 file (checked 1 source file)
+```
+
+--
+
+## This is catchy!
+
+We've seen that `mypy` can catch:
+
+- Mismatched assignments _(variables and function arguments)_
+- Missing return statements
+
+> And adding type hints was cheaper than writing unit tests...
+
+<br/>
+<br/>
+Let's see some more examples.
+
+--
+
+## `example2.py`
+
+```python
+# pack/example2.py
+from typing import List, Optional
+
+class Greeter:
+    audience: List[str]
+    greeting: str = "Hello"
+    emphatic: bool
+
+    def __init__(
+            self,
+            audience: List[str],
+            emphatic: Optional[bool] = None
+        ) -> None:
+        self.audience = audience
+        self.emphatic = emphatic
+
+def main() -> None:
+    greeter = Greeter(["Carles", "Marta", "Joan"])
+    greeter.greet()
+```
+<br/>
+
+```sh
+$ mypy pack/example2.py
+```
+
+--
+
+## Fixed? `example2b.py`
+
+Let's fix the incompatible assignment and add the missing method:
+
+```python
+class Greeter:
+    # assign a non-None boolean value
+        self.emphatic = (
+            False if emphatic is None
+            else emphatic
+        )
+
+    # add missing method
+    def greet(self) -> str:
+        whom = self.audience.join(", ")
+        greeting = f"{self.greeting} {whom}"
+        if self.emphatic:
+            greeting += ", innit!"
+```
+<br/>
+```sh
+$ mypy pack/example2b.py
+```
+
+--
+
+## Fixed: `example2c.py`
+
+We now add a `return` statement and fix the _joining_.
+
+```python
+    def greet(self) -> str:
+        # whom = self.audience.join(", ")  # Oops!
+        whom = ", ".join(self.audience)
+        greeting = f"{self.greeting} {whom}"
+        if self.emphatic:
+            greeting += ", innit!"
+        return greeting  # ADDED THIS
+```
+<br/>
+```sh
+$ mypy pack/example2c.py
+```
+
+--
+
+## Recap
+
+Places where we've seen we can use type annotations:
+
+- When defining variables
+- In function parameters
+- In function return types
+
+...but we can also use them to define _new types_ or aliases.
+
+--
+
+## Type aliases
+
+```python
+# pack/example3.py
+from typing import Dict, List
+
+# Let's give things meaningful names
+Person = Dict[str, str]
+Contacts = List[Person]
+
+def find(
+        addressbook: Contacts,
+        name: str
+    ) -> Person:
+    # ...
+
+addressbook: Contacts = [
+    { "name": "Petra" },
+    { "name": "Eloi" },
+]
+
+eloi: Person = find(addressbook, "Eloi")
+```
+
+--
+
+## Unlocking badges
+
+Using type hints opens up new possibilities for tools,
+because they can be smarter about understanding your code.
+
+Examples:
+
+- **`@dataclass`** - reduce boilerplate
+- **pydantic** - data validation
+- **FastAPI** - build HTTP APIs
+
+--
+
+## Dataclasses
+
+The `dataclass` decorator (since 3.7) frees us from writing boilerplate.
+
+```python
+# pack/example_dataclass.py
+
+@dataclass
+class Greeter:
+    audience: List[str]
+    emphatic: bool = False
+    greeting: str = "Hello"
+    # @dataclass will generate for us:
+    # __init__, __repr__, __eq__...
+```
+
+--
+
+## Pydantic
+
+Data validation and settings management using python type annotations.
+
+`pydantic` enforces type hints at runtime, and provides user friendly errors when data is invalid.
+
+--
+
+```python
+# pack/example_pydantic.py
+
+from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel
+
+
+class User(BaseModel):
+    id: int
+    name: str
+    signup_ts: Optional[datetime] = None
+    friends: List[int] = []
+
+
+external_data = {
+    "id": "123",
+    "name": "Jerry",
+    "signup_ts": "2019-06-01 12:22",
+    "friends": [1, 2, "3"],
+}
+
+user = User(**external_data)
+# id=123
+# name='Jerry'
+# signup_ts=datetime.datetime(2019, 6, 1, 12, 22)
+# friends=[1, 2, 3]
+```
+
+--
+
+## FastAPI
+
+> FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
+
+Relies on `pydantic`
+
+
+--
+
+```python
+# pack/example_fastapi.py
+
+from typing import Optional
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+items_db = []
+app = FastAPI()
+
+
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
+
+@app.get("/items/")
+async def read_item(
+        skip: int = 0, limit: int = 10
+    ):
+    return items_db[skip : skip + limit]
+
+
+@app.post("/items/")
+async def create_item(item: Item):
+    items_db.append(item)
+    return item
+```
+
+-- links
+
+## Useful links
+
+- https://www.python.org/dev/peps/pep-0483/ an intro to type hints
+- https://docs.python.org/3.8/library/typing.html the typing package
+- https://docs.python.org/3/library/dataclasses.html the dataclass decorator
+- https://pydantic-docs.helpmanual.io/ pydantic
+- https://fastapi.tiangolo.com/ FastAPI
+
+
+
+--
+
+# Thanks!
+
+![](whoami-avatar.jpg)
+
+I'm Carles Barrobés
+
+> If you want help with CI/CD, Python/Django, or making your developer teams more productive, contact me!
+
+https://carles.barrobes.com/pro
+
+</textarea
+    >
+
+    <!-- SlidePack markdown compilation & UI goodies -->
+    <script src="slide-pack.js"></script>
+  </body>
+</html>
