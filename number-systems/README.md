@@ -1,3 +1,3 @@
-# Talk slides: what's new in Slingshot
+# Talk slides: Number systems
 
-Originally written for the Skyscanner BCN chapter, to cover IaC and pipelines.
+We'll see how humans have used numbers over millennia, and why 6 is the perfect base for us.

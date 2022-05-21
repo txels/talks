@@ -1,3 +1,3 @@
-# Talk slides: what's new in Slingshot
+# Talk slides: thinking about future Slingshot
 
-Originally written for the Skyscanner BCN chapter, to cover IaC and pipelines.
+A proposal for rethinking Slingshot to be more k8s-native
